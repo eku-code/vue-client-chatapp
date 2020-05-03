@@ -18,6 +18,18 @@ export const router = new Router({
       path: "/",
       name: "main",
       component: () => import("./components/Main.vue"),
+      children: [
+        {
+          path: "/",
+          name: "myprofile",
+          component: () => import("./components/MyProfile.vue"),
+        },
+        {
+          path: "/about",
+          name: "about",
+          component: () => import("./components/About.vue"),
+        },
+      ],
     },
   ],
 });
