@@ -40,6 +40,17 @@ export const router = new Router({
           component: () => import("./components/User.vue"),
           props: true,
         },
+        {
+          path: "/chatlist",
+          name: "chatlist",
+          component: () => import("./components/ChatList.vue"),
+        },
+        {
+          path: "chat/:chatId",
+          name: "chat",
+          component: () => import("./components/Chat.vue"),
+          props: true,
+        },
       ],
     },
   ],

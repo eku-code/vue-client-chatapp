@@ -16,7 +16,7 @@
             <v-list-item-title>Мой профиль</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item link>
+        <v-list-item to="/chatlist">
           <v-list-item-action>
             <v-icon>mdi-message-text</v-icon>
           </v-list-item-action>
