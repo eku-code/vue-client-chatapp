@@ -27,7 +27,7 @@
 
           <v-list-item
             :key="item.id"
-            @click="openClick(item.id)"
+            @click="openClick(item.user.id)"
           >
             <v-list-item-avatar>
               <v-img v-bind:src="'data:image/jpeg;base64,'
@@ -68,6 +68,11 @@ export default {
     chatService
       .getChat(this.$route.params.chatId)
       .then(res => (this.chatobj = res.data));
+  },
+  methods: {
+    openClick(userId) {
+      this.$router.push({ name: "user", params: { userId: userId } });
+    }
   }
 };
 </script>
