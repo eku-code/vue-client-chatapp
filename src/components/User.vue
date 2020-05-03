@@ -1,5 +1,7 @@
 <template>
+
   <v-container fluid>
+
     <v-card
       class="mx-auto"
       max-width="344"
@@ -21,7 +23,7 @@
           color="purple"
           text
         >
-          Мой статус
+          Статус
         </v-btn>
 
         <v-spacer></v-spacer>
@@ -48,7 +50,7 @@
 import userService from "../services/user.service";
 
 export default {
-  name: "myprofile",
+  name: "user",
   data: () => ({
     user: {
       firstName: "",
@@ -59,7 +61,9 @@ export default {
     }
   }),
   created() {
-    userService.getMyProfile().then(res => (this.user = res.data));
+    userService
+      .getUser(this.$route.params.userId)
+      .then(res => (this.user = res.data));
   }
 };
 </script>

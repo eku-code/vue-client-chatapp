@@ -29,6 +29,17 @@ export const router = new Router({
           name: "about",
           component: () => import("./components/About.vue"),
         },
+        {
+          path: "/userlist",
+          name: "userlist",
+          component: () => import("./components/UserList.vue"),
+        },
+        {
+          path: "user/:userId",
+          name: "user",
+          component: () => import("./components/User.vue"),
+          props: true,
+        },
       ],
     },
   ],

@@ -18,6 +18,38 @@ const userService = {
         });
     });
   },
+  getUserList() {
+    return new Promise((resolve, reject) => {
+      apiService
+        .get("user")
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((err) => {
+          router.push({
+            path: "/login",
+          });
+          console.error(err);
+          reject(err);
+        });
+    });
+  },
+  getUser(id) {
+    return new Promise((resolve, reject) => {
+      apiService
+        .get("user/" + id)
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((err) => {
+          router.push({
+            path: "/login",
+          });
+          console.error(err);
+          reject(err);
+        });
+    });
+  },
 };
 
 export default userService;

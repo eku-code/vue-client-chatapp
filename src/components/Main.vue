@@ -18,23 +18,23 @@
         </v-list-item>
         <v-list-item link>
           <v-list-item-action>
-            <v-icon>mdi-contact-mail</v-icon>
+            <v-icon>mdi-message-text</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Чаты</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item link>
+        <v-list-item to="/userlist">
           <v-list-item-action>
-            <v-icon>mdi-contact-mail</v-icon>
+            <v-icon>mdi-magnify</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Все профили</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item to="about">
+        <v-list-item to="/about">
           <v-list-item-action>
-            <v-icon>mdi-contact-mail</v-icon>
+            <v-icon>mdi-arrow-up-bold-box-outline</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>О приложении</v-list-item-title>
@@ -53,10 +53,7 @@
     </v-app-bar>
 
     <v-content>
-      <v-container
-        class="fill-height"
-        fluid
-      >
+      <v-container fluid>
         <router-view></router-view>
       </v-container>
     </v-content>
