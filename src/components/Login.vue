@@ -16,7 +16,7 @@
           >
             <v-card class="elevation-12">
               <v-toolbar
-                color="primary"
+                color="#00a34b"
                 dark
                 flat
               >
@@ -46,7 +46,7 @@
               <v-card-actions>
                 <v-spacer />
                 <v-btn
-                  color="primary"
+                  color="#00a34b"
                   @click="doLogin"
                 >Войти</v-btn>
               </v-card-actions>

@@ -1,26 +1,19 @@
 <template>
   <v-container fluid>
-    <v-card
-      class="mx-auto"
-      max-width="344"
-    >
-      <v-img v-bind:src="'data:image/jpeg;base64,'+this.user.picture"> </v-img>
+    <v-card class="mx-auto" max-width="344">
+      <v-img v-bind:src="'data:image/jpeg;base64,' + this.user.picture">
+      </v-img>
 
       <v-card-title>
-        {{this.user.firstName}} {{this.user.lastName}}
+        {{ this.user.firstName }} {{ this.user.lastName }}
       </v-card-title>
 
       <v-card-subtitle>
-        {{this.user.login}}
+        {{ this.user.login }}
       </v-card-subtitle>
 
       <v-card-actions>
-        <v-btn text>Чат</v-btn>
-
-        <v-btn
-          color="purple"
-          text
-        >
+        <v-btn color="purple" text>
           Мой статус
         </v-btn>
 
@@ -36,7 +29,7 @@
           <v-divider></v-divider>
 
           <v-card-text>
-            {{this.user.userText}}
+            {{ this.user.userText }}
           </v-card-text>
         </div>
       </v-expand-transition>
@@ -51,15 +44,16 @@ export default {
   name: "myprofile",
   data: () => ({
     user: {
+      id: "",
       firstName: "",
       lastName: "",
       login: "",
       userText: "",
-      picture: ""
-    }
+      picture: "",
+    },
   }),
   created() {
-    userService.getMyProfile().then(res => (this.user = res.data));
-  }
+    userService.getMyProfile().then((res) => (this.user = res.data));
+  },
 };
 </script>

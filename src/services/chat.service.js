@@ -34,6 +34,22 @@ const chatService = {
         });
     });
   },
+  sendMessage(messageObj) {
+    return new Promise((resolve, reject) => {
+      apiService
+        .post("chat", messageObj)
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((err) => {
+          router.push({
+            path: "/login",
+          });
+          console.error(err);
+          reject(err);
+        });
+    });
+  },
 };
 
 export default chatService;

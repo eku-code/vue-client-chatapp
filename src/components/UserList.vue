@@ -9,7 +9,7 @@
     >
 
       <v-toolbar
-        color="indigo"
+        color="#00a34b"
         dark
       >
 
