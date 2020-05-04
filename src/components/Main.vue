@@ -1,40 +1,78 @@
 <template>
-  
-    <div>
-      <v-container>
-        <v-layout
-          text-center
-          wrap
+  <v-app id="inspire">
+    <v-navigation-drawer
+      v-model="drawer"
+      app
+    >
+      <v-list dense>
+        <v-list-item
+          to="/"
+          link
         >
-          <v-card class="d-inline-block mx-auto" height="600" width="300">
-            Chat
-            <v-text-field class="inpmsg">
-              
-            </v-text-field>
-          </v-card>
-        </v-layout>
-      </v-container>
-    </div>
+          <v-list-item-action>
+            <v-icon>mdi-home</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Мой профиль</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item to="/chatlist">
+          <v-list-item-action>
+            <v-icon>mdi-message-text</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Чаты</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item to="/userlist">
+          <v-list-item-action>
+            <v-icon>mdi-magnify</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Все профили</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item to="/about">
+          <v-list-item-action>
+            <v-icon>mdi-arrow-up-bold-box-outline</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>О приложении</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
 
+    <v-app-bar
+      app
+      color="#00a34b"
+      dark
+    >
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      <v-toolbar-title>CovidChat#</v-toolbar-title>
+    </v-app-bar>
+
+    <v-content>
+      <v-container fluid>
+        <router-view></router-view>
+      </v-container>
+    </v-content>
+    <v-footer
+      color="#00a34b"
+      app
+    >
+      <span class="white--text">&copy; 2020</span>
+    </v-footer>
+  </v-app>
 </template>
 
 <script>
-
 export default {
-  name: 'Main',
-
+  props: {
+    source: String
+  },
   data: () => ({
-
-  }),
+    drawer: true
+  })
 };
 </script>
-
-<style scoped>
-
-.inpmsg {
-  bottom: 100px;
-  border: 3px solid primary;
-}
-
-</style>
-
