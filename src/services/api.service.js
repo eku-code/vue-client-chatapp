@@ -2,7 +2,7 @@ import axios from "axios";
 
 // // Set config defaults when creating the instance
 const instance = axios.create({
-  baseURL: "http://192.168.1.65:8080",
+  baseURL: "https://288adf6f.ngrok.io",
 });
 //отменяем запрос если он висит больше 1 секунды
 instance.defaults.timeout = 6000;
@@ -17,6 +17,10 @@ const apiService = {
   },
 
   get(resource, config) {
+    if (instance.defaults.headers.common["Authorization"] === undefined) {
+      let token = localStorage.getItem("user-token");
+      this.setHeader(token);
+    }
     return instance.get(resource, config);
   },
 

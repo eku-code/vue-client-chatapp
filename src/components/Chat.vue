@@ -1,8 +1,13 @@
 <template>
-  <v-container fluid style="margin-bottom: 75px;" ref="myRef">
+  <v-container fluid style="margin-bottom: 75px;">
     <div id="my-container">
       <v-card class="mx-auto">
         <v-toolbar color="#00a34b" dark>
+          <v-list-item-avatar>
+            <v-img
+              v-bind:src="'data:image/jpeg;base64,' + this.chatobj.pictureOther"
+            ></v-img>
+          </v-list-item-avatar>
           <v-toolbar-title
             >{{ this.chatobj.fullNameOtherUser }}
           </v-toolbar-title>
@@ -14,7 +19,7 @@
           </v-btn>
         </v-toolbar>
 
-        <v-list three-line>
+        <v-list three-line maxHeight="400px">
           <template v-for="item in chatobj.messages.slice().reverse()">
             <v-list-item :key="item.id">
               <v-list-item-avatar @click="openClick(item.user.id)">
@@ -27,9 +32,13 @@
                   v-bind:src="'data:image/jpeg;base64,' + chatobj.pictureOther"
                 ></v-img>
               </v-list-item-avatar>
-
               <v-list-item-content>
-                <v-list-item-title>{{ item.text }}</v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ item.sentTime }}
+                </v-list-item-subtitle>
+                <v-list-item-title style="white-space: normal;">
+                  {{ item.text }}
+                </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </template>
@@ -50,7 +59,13 @@
                 ></v-textarea>
               </v-col>
               <v-col justify="center" align="center">
-                <v-btn icon outlined color="#00a34b" @click="sendMessage">
+                <v-btn
+                  icon
+                  outlined
+                  color="#00a34b"
+                  @click="sendMessage"
+                  :disabled="clickable ? '' : disabled"
+                >
                   <v-icon>mdi-telegram</v-icon>
                 </v-btn>
               </v-col>
@@ -83,11 +98,21 @@ export default {
       },
       text: "",
     },
+    text: "",
   }),
   created() {
     chatService
       .getChat(this.$route.params.chatId)
       .then((res) => (this.chatobj = res.data));
+  },
+  computed: {
+    clickable() {
+      if (!this.text.replace(/\s/g, "").length) {
+        return true;
+      }
+
+      return false;
+    },
   },
   methods: {
     openClick(userId) {
@@ -107,8 +132,8 @@ export default {
 
 <style scoped>
 .v-list {
-  height: 400px;
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column-reverse;
 }
