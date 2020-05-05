@@ -13,6 +13,7 @@ const loginService = {
         .post("login", requestBody)
         .then((res) => {
           apiService.setHeader(res.data);
+          localStorage.setItem("user-token", res.data);
           router.push({
             path: "/",
           });
