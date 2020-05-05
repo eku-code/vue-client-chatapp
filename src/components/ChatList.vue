@@ -28,6 +28,9 @@
               <v-list-item-subtitle
                 v-html="item.lastMessage"
               ></v-list-item-subtitle>
+              <v-list-item-subtitle
+                v-html="item.sentTime"
+              ></v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </template>
