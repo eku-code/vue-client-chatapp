@@ -2,7 +2,7 @@ import axios from "axios";
 
 // // Set config defaults when creating the instance
 const instance = axios.create({
-  baseURL: "https://288adf6f.ngrok.io",
+  baseURL: "http://192.168.1.64:9090",
 });
 //отменяем запрос если он висит больше 1 секунды
 instance.defaults.timeout = 6000;

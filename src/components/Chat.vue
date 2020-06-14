@@ -1,15 +1,18 @@
 <template>
-  <v-container fluid style="margin-bottom: 75px;">
+  <v-container
+    fluid
+    style="margin-bottom: 75px;"
+  >
     <div id="my-container">
       <v-card class="mx-auto">
-        <v-toolbar color="#00a34b" dark>
+        <v-toolbar
+          color="#00a34b"
+          dark
+        >
           <v-list-item-avatar>
-            <v-img
-              v-bind:src="'data:image/jpeg;base64,' + this.chatobj.pictureOther"
-            ></v-img>
+            <v-img v-bind:src="'data:image/jpeg;base64,' + this.chatobj.pictureOther"></v-img>
           </v-list-item-avatar>
-          <v-toolbar-title
-            >{{ this.chatobj.fullNameOtherUser }}
+          <v-toolbar-title>{{ this.chatobj.fullNameOtherUser }}
           </v-toolbar-title>
 
           <v-spacer></v-spacer>
@@ -19,7 +22,10 @@
           </v-btn>
         </v-toolbar>
 
-        <v-list three-line maxHeight="400px">
+        <v-list
+          three-line
+          maxHeight="400px"
+        >
           <template v-for="item in chatobj.messages.slice().reverse()">
             <v-list-item :key="item.id">
               <v-list-item-avatar @click="openClick(item.user.id)">
@@ -37,7 +43,9 @@
                   {{ item.sentTime }}
                 </v-list-item-subtitle>
                 <v-list-item-title style="white-space: normal;">
-                  {{ item.text }}
+
+                  {{item.text}}
+
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -49,7 +57,10 @@
         <template>
           <v-container>
             <v-row>
-              <v-col cols="15" md="10">
+              <v-col
+                cols="15"
+                md="10"
+              >
                 <v-textarea
                   label="Новое сообщение"
                   no-resize
@@ -58,7 +69,10 @@
                   v-model="text"
                 ></v-textarea>
               </v-col>
-              <v-col justify="center" align="center">
+              <v-col
+                justify="center"
+                align="center"
+              >
                 <v-btn
                   icon
                   outlined
@@ -85,25 +99,25 @@ export default {
   data: () => ({
     chatobj: {
       chat: {
-        id: "",
+        id: ""
       },
       fullNameOtherUser: "",
       pictureMe: "",
       pictureOther: "",
-      messages: [],
+      messages: []
     },
     newMessageObj: {
       chat: {
-        id: "",
+        id: ""
       },
-      text: "",
+      text: ""
     },
-    text: "",
+    text: ""
   }),
   created() {
     chatService
       .getChat(this.$route.params.chatId)
-      .then((res) => (this.chatobj = res.data));
+      .then(res => (this.chatobj = res.data));
   },
   computed: {
     clickable() {
@@ -112,7 +126,7 @@ export default {
       }
 
       return false;
-    },
+    }
   },
   methods: {
     openClick(userId) {
@@ -123,10 +137,10 @@ export default {
       this.newMessageObj.text = this.text;
       chatService
         .sendMessage(this.newMessageObj)
-        .then((res) => (this.chatobj = res.data));
+        .then(res => (this.chatobj = res.data));
       this.text = "";
-    },
-  },
+    }
+  }
 };
 </script>
 
