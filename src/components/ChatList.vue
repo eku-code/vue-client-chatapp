@@ -28,10 +28,12 @@
               <v-list-item-subtitle
                 v-html="item.lastMessage"
               ></v-list-item-subtitle>
-              <v-list-item-subtitle
-                v-html="item.sentTime"
-              ></v-list-item-subtitle>
+              <v-list-item-subtitle v-html="item.sentTime">
+              </v-list-item-subtitle>
             </v-list-item-content>
+            <v-icon v-if="item.newMessages" color="blue"
+              >mdi-comment-alert</v-icon
+            >
           </v-list-item>
         </template>
       </v-list>
