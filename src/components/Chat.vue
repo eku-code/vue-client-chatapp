@@ -64,7 +64,7 @@
                   outlined
                   color="#00a34b"
                   @click="sendMessage"
-                  :disabled="clickable ? '' : disabled"
+                  :disabled="clickable"
                 >
                   <v-icon>mdi-telegram</v-icon>
                 </v-btn>
@@ -81,6 +81,7 @@
 import chatService from "../services/chat.service";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
+import constants from "../constants.js";
 
 export default {
   name: "chat",
@@ -101,27 +102,37 @@ export default {
       text: "",
     },
     text: "",
+    value: "",
     stompClient: null,
   }),
   created() {
     this.getChat();
 
     var socket = new SockJS(
-      "http://192.168.1.64:9090/ws/myapp/gs-guide-websocket/"
+      constants.BACKEND_URL + "/ws/myapp/gs-guide-websocket/"
     );
 
-    let stompClient = Stomp.over(socket);
+    let stompClient = Stomp.over(socket, {
+      reconnectDelay: 5000,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
+    });
     this.stompClient = stompClient;
     let funChat = this.getChat;
-    stompClient.connect({}, function(frame) {
+    let funSubscribe = stompClient.connect({}, function(frame) {
       console.log("Connected: " + frame);
       stompClient.subscribe("/topic/hello", function(message) {
         console.log("Recieved message" + message);
         funChat();
       });
     });
+    funSubscribe();
+    window.addEventListener("focus", () => funSubscribe());
   },
   beforeDestroy() {
+    this.stompClient.disconnect();
+  },
+  destroyed() {
     this.stompClient.disconnect();
   },
   computed: {
@@ -154,6 +165,7 @@ export default {
       chatService
         .getChat(this.$route.params.chatId)
         .then((res) => (this.chatobj = res.data));
+      this.$forceUpdate;
     },
   },
 };

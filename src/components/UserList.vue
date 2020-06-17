@@ -21,16 +21,16 @@
             </v-list-item-avatar>
 
             <v-list-item-content>
-              <v-list-item-title
+              <v-list-item-title style="white-space: normal;"
                 >{{ item.firstName }} {{ item.lastName }}
-                <div style="color: blue; font-size: 15px;">
-                  {{ item.isOnline ? "Online" : "Offline" }}
-                </div></v-list-item-title
-              >
+              </v-list-item-title>
               <v-list-item-subtitle
                 v-html="item.userText"
               ></v-list-item-subtitle>
             </v-list-item-content>
+            <div style="color: blue; font-size: 15px;">
+              {{ item.isOnline ? "Online" : "Offline" }}
+            </div>
           </v-list-item>
         </template>
       </v-list>
