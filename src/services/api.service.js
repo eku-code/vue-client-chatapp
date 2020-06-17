@@ -1,8 +1,9 @@
 import axios from "axios";
+import constants from "../constants.js";
 
 // // Set config defaults when creating the instance
 const instance = axios.create({
-  baseURL: "http://192.168.1.64:9090",
+  baseURL: constants.BACKEND_URL,
 });
 //отменяем запрос если он висит больше 1 секунды
 instance.defaults.timeout = 6000;

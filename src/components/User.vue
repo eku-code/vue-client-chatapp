@@ -12,6 +12,14 @@
         {{ this.user.login }}
       </v-card-subtitle>
 
+      <v-card-subtitle v-if="this.user.isOnline" style="color: blue">
+        Online
+      </v-card-subtitle>
+
+      <v-card-subtitle v-else style="color: blue">
+        Offline
+      </v-card-subtitle>
+
       <v-card-actions>
         <v-btn text @click="openChatClick">Чат</v-btn>
 

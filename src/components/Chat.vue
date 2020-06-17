@@ -1,18 +1,15 @@
 <template>
-  <v-container
-    fluid
-    style="margin-bottom: 75px;"
-  >
+  <v-container fluid style="margin-bottom: 75px;">
     <div id="my-container">
       <v-card class="mx-auto">
-        <v-toolbar
-          color="#00a34b"
-          dark
-        >
+        <v-toolbar color="#00a34b" dark>
           <v-list-item-avatar>
-            <v-img v-bind:src="'data:image/jpeg;base64,' + this.chatobj.pictureOther"></v-img>
+            <v-img
+              v-bind:src="'data:image/jpeg;base64,' + this.chatobj.pictureOther"
+            ></v-img>
           </v-list-item-avatar>
-          <v-toolbar-title>{{ this.chatobj.fullNameOtherUser }}
+          <v-toolbar-title
+            >{{ this.chatobj.fullNameOtherUser }}
           </v-toolbar-title>
 
           <v-spacer></v-spacer>
@@ -22,10 +19,7 @@
           </v-btn>
         </v-toolbar>
 
-        <v-list
-          three-line
-          maxHeight="400px"
-        >
+        <v-list three-line maxHeight="400px">
           <template v-for="item in chatobj.messages.slice().reverse()">
             <v-list-item :key="item.id">
               <v-list-item-avatar @click="openClick(item.user.id)">
@@ -43,9 +37,7 @@
                   {{ item.sentTime }}
                 </v-list-item-subtitle>
                 <v-list-item-title style="white-space: normal;">
-
-                  {{item.text}}
-
+                  {{ item.text }}
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -57,10 +49,7 @@
         <template>
           <v-container>
             <v-row>
-              <v-col
-                cols="15"
-                md="10"
-              >
+              <v-col cols="15" md="10">
                 <v-textarea
                   label="Новое сообщение"
                   no-resize
@@ -69,16 +58,13 @@
                   v-model="text"
                 ></v-textarea>
               </v-col>
-              <v-col
-                justify="center"
-                align="center"
-              >
+              <v-col justify="center" align="center">
                 <v-btn
                   icon
                   outlined
                   color="#00a34b"
                   @click="sendMessage"
-                  :disabled="clickable ? '' : disabled"
+                  :disabled="clickable"
                 >
                   <v-icon>mdi-telegram</v-icon>
                 </v-btn>
@@ -93,31 +79,61 @@
 
 <script>
 import chatService from "../services/chat.service";
+import SockJS from "sockjs-client";
+import Stomp from "webstomp-client";
+import constants from "../constants.js";
 
 export default {
   name: "chat",
   data: () => ({
     chatobj: {
       chat: {
-        id: ""
+        id: "",
       },
       fullNameOtherUser: "",
       pictureMe: "",
       pictureOther: "",
-      messages: []
+      messages: [],
     },
     newMessageObj: {
       chat: {
-        id: ""
+        id: "",
       },
-      text: ""
+      text: "",
     },
-    text: ""
+    text: "",
+    value: "",
+    stompClient: null,
   }),
   created() {
-    chatService
-      .getChat(this.$route.params.chatId)
-      .then(res => (this.chatobj = res.data));
+    this.getChat();
+
+    var socket = new SockJS(
+      constants.BACKEND_URL + "/ws/myapp/gs-guide-websocket/"
+    );
+
+    let stompClient = Stomp.over(socket, {
+      reconnectDelay: 5000,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
+    });
+    this.stompClient = stompClient;
+    let funChat = this.getChat;
+    let funSubscribe = stompClient.connect({}, function(frame) {
+      console.log("Connected: " + frame);
+      stompClient.subscribe("/topic/hello", function(message) {
+        console.log("Recieved message" + message);
+        funChat();
+      });
+    });
+    funSubscribe();
+    window.addEventListener("focus", () => funSubscribe());
+  },
+  beforeDestroy() {
+    this.stompClient.disconnect();
+  },
+  destroyed() {
+    this.stompClient.disconnect();
   },
   computed: {
     clickable() {
@@ -126,7 +142,7 @@ export default {
       }
 
       return false;
-    }
+    },
   },
   methods: {
     openClick(userId) {
@@ -137,10 +153,21 @@ export default {
       this.newMessageObj.text = this.text;
       chatService
         .sendMessage(this.newMessageObj)
-        .then(res => (this.chatobj = res.data));
+        .then((res) => (this.chatobj = res.data));
       this.text = "";
-    }
-  }
+      this.stompClient.send(
+        "/app/hello",
+        //{ Authorization: localStorage.getItem("user-token") },
+        "Hello"
+      );
+    },
+    getChat() {
+      chatService
+        .getChat(this.$route.params.chatId)
+        .then((res) => (this.chatobj = res.data));
+      this.$forceUpdate;
+    },
+  },
 };
 </script>
 
