@@ -6,7 +6,7 @@ const instance = axios.create({
   baseURL: constants.BACKEND_URL,
 });
 //отменяем запрос если он висит больше 1 секунды
-instance.defaults.timeout = 6000;
+instance.defaults.timeout = 60000;
 
 const apiService = {
   setHeader(token) {
