@@ -22,7 +22,7 @@
         <v-list three-line maxHeight="400px">
           <template v-for="item in chatobj.messages.slice().reverse()">
             <v-list-item :key="item.id">
-              <v-list-item-avatar @click="openClick(item.user.id)">
+              <v-list-item-avatar @click="openUserClick(item.user.id)">
                 <v-img
                   v-if="item.userFrom === 'me'"
                   v-bind:src="'data:image/jpeg;base64,' + chatobj.pictureMe"
@@ -104,68 +104,62 @@ export default {
     text: "",
     value: "",
     stompClient: null,
+    valChatId: null,
   }),
   created() {
-    this.getChat();
-
-    var socket = new SockJS(
-      constants.BACKEND_URL + "/ws/myapp/gs-guide-websocket/"
-    );
-
-    let stompClient = Stomp.over(socket, {
-      reconnectDelay: 5000,
-      heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000,
-    });
-    this.stompClient = stompClient;
-    let funChat = this.getChat;
-    let funSubscribe = stompClient.connect({}, function(frame) {
-      console.log("Connected: " + frame);
-      stompClient.subscribe("/topic/hello", function(message) {
-        console.log("Recieved message" + message);
-        funChat();
-      });
-    });
-    funSubscribe();
-    window.addEventListener("focus", () => funSubscribe());
+    this.valChatId = this.$route.params.chatId;
+    window.addEventListener("focus", this.connectAndUpdate, false);
+    this.connectAndUpdate();
   },
   beforeDestroy() {
     this.stompClient.disconnect();
-  },
-  destroyed() {
-    this.stompClient.disconnect();
+    window.removeEventListener("focus", this.connectAndUpdate);
   },
   computed: {
     clickable() {
       if (!this.text.replace(/\s/g, "").length) {
         return true;
       }
-
       return false;
     },
   },
   methods: {
-    openClick(userId) {
+    openUserClick(userId) {
       this.$router.push({ name: "user", params: { userId: userId } });
     },
     sendMessage() {
       this.newMessageObj.chat = this.chatobj.chat;
       this.newMessageObj.text = this.text;
-      chatService
-        .sendMessage(this.newMessageObj)
-        .then((res) => (this.chatobj = res.data));
-      this.text = "";
-      this.stompClient.send(
-        "/app/hello",
-        //{ Authorization: localStorage.getItem("user-token") },
-        "Hello"
-      );
+      chatService.sendMessage(this.newMessageObj).then((res) => {
+        this.chatobj = res.data;
+        this.text = "";
+        this.stompClient.send("/app/hello", "Hello");
+      });
     },
     getChat() {
-      chatService
-        .getChat(this.$route.params.chatId)
-        .then((res) => (this.chatobj = res.data));
-      this.$forceUpdate;
+      chatService.getChat(this.valChatId).then((res) => {
+        this.chatobj = res.data;
+      });
+    },
+    connectAndUpdate() {
+      let funGetChat = this.getChat;
+      funGetChat();
+      if (this.stompClient && this.stompClient.connected) {
+        return;
+      }
+      var socket = new SockJS(
+        constants.BACKEND_URL + "/ws/myapp/gs-guide-websocket/"
+      );
+      let stompClient = Stomp.over(socket);
+      this.stompClient = stompClient;
+
+      stompClient.connect({}, function(frame) {
+        console.log("Connected: " + frame);
+        stompClient.subscribe("/topic/hello", function(message) {
+          console.log("Recieved message" + message);
+          funGetChat();
+        });
+      });
     },
   },
 };
