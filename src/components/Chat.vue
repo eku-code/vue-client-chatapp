@@ -13,14 +13,23 @@
           </v-toolbar-title>
 
           <v-spacer></v-spacer>
+          <v-progress-linear
+            v-show="loading"
+            :active="loading"
+            :indeterminate="loading"
+            absolute
+            bottom
+            color="white"
+          >
+          </v-progress-linear>
 
           <v-btn icon>
             <v-icon>mdi-magnify</v-icon>
           </v-btn>
         </v-toolbar>
 
-        <v-list three-line maxHeight="400px">
-          <template v-for="item in chatobj.messages.slice().reverse()">
+        <v-list three-line maxHeight="400px" id="scroll-target">
+          <template v-for="item in chatobj.messages.slice()">
             <v-list-item :key="item.id">
               <v-list-item-avatar @click="openUserClick(item.user.id)">
                 <v-img
@@ -36,7 +45,10 @@
                 <v-list-item-subtitle>
                   {{ item.sentTime }}
                 </v-list-item-subtitle>
-                <v-list-item-title style="white-space: normal;">
+                <v-list-item-title
+                  style="white-space: normal;"
+                  v-scroll:#scroll-target="onScroll"
+                >
                   {{ item.text }}
                 </v-list-item-title>
               </v-list-item-content>
@@ -105,6 +117,8 @@ export default {
     value: "",
     stompClient: null,
     valChatId: null,
+    limit: 20,
+    loading: true,
   }),
   created() {
     this.valChatId = this.$route.params.chatId;
@@ -128,6 +142,8 @@ export default {
       this.$router.push({ name: "user", params: { userId: userId } });
     },
     sendMessage() {
+      this.limit = 20;
+      this.$vuetify.goTo(0);
       this.newMessageObj.chat = this.chatobj.chat;
       this.newMessageObj.text = this.text;
       chatService.sendMessage(this.newMessageObj).then((res) => {
@@ -137,8 +153,10 @@ export default {
       });
     },
     getChat() {
-      chatService.getChat(this.valChatId).then((res) => {
+      this.loading = true;
+      chatService.getChat(this.valChatId, this.limit).then((res) => {
         this.chatobj = res.data;
+        this.loading = false;
       });
     },
     connectAndUpdate() {
@@ -160,6 +178,12 @@ export default {
           funGetChat();
         });
       });
+    },
+    onScroll(e) {
+      if (e.target.scrollTop === 0) {
+        this.limit = this.limit + 20;
+        this.getChat();
+      }
     },
   },
 };
