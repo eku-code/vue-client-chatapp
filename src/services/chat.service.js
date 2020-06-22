@@ -18,10 +18,13 @@ const chatService = {
         });
     });
   },
-  getChat(id) {
+  getChat(id, limit) {
+    const params = {
+      limit: limit,
+    };
     return new Promise((resolve, reject) => {
       apiService
-        .get("chat/" + id)
+        .get("chat/" + id, { params })
         .then((res) => {
           resolve(res);
         })
