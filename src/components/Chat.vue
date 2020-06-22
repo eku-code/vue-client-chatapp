@@ -8,8 +8,8 @@
               v-bind:src="'data:image/jpeg;base64,' + this.chatobj.pictureOther"
             ></v-img>
           </v-list-item-avatar>
-          <v-toolbar-title
-            >{{ this.chatobj.fullNameOtherUser }}
+          <v-toolbar-title style="white-space: normal;">
+            {{ this.chatobj.fullNameOtherUser }}
           </v-toolbar-title>
 
           <v-spacer></v-spacer>
@@ -119,6 +119,7 @@ export default {
     valChatId: null,
     limit: 20,
     loading: true,
+    isChrome: navigator.userAgent.indexOf("Chrome") !== -1,
   }),
   created() {
     this.valChatId = this.$route.params.chatId;
@@ -180,7 +181,10 @@ export default {
       });
     },
     onScroll(e) {
-      if (e.target.scrollTop === 0) {
+      if (
+        (e.target.scrollTop === 0 && this.isChrome) ||
+        (e.target.scrollHeight + e.target.scrollTop === 400 && !this.isChrome)
+      ) {
         this.limit = this.limit + 20;
         this.getChat();
       }

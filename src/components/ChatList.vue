@@ -26,7 +26,7 @@
                 {{ item.user.lastName }}</v-list-item-title
               >
               <v-list-item-subtitle
-                v-html="item.lastMessage"
+                v-html="item.lastMessageText"
               ></v-list-item-subtitle>
               <v-list-item-subtitle v-html="item.sentTime">
               </v-list-item-subtitle>
