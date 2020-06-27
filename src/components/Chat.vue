@@ -29,7 +29,7 @@
           </v-btn>
         </v-toolbar>
 
-        <v-list three-line maxHeight="400px" id="scroll-target">
+        <v-list three-line id="scroll-target" max-height="400px">
           <template v-for="item in chatobj.messages.slice()">
             <v-list-item :key="item.id">
               <v-list-item-avatar @click="openUserClick(item.user.id)">
@@ -57,21 +57,35 @@
           </template>
         </v-list>
         <template>
-          <v-divider></v-divider>
-        </template>
-        <template>
+          <template>
+            <v-divider></v-divider>
+          </template>
           <v-dialog v-model="dialog" width="500">
             <v-img :src="urlFromPicture" @click="imageClick"></v-img>
           </v-dialog>
-          <v-container>
-            <v-row>
-              <v-img
-                :src="urlFromPicture"
-                max-height="150px"
-                max-width="150px"
-                @click="imageClick"
-              ></v-img>
-              <v-col cols="15" md="8">
+          <v-container fluid>
+            <v-img
+              :src="urlFromPicture"
+              max-height="250px"
+              max-width="150px"
+              @click="imageClick"
+              v-show="pic_value"
+              contain
+              :style="
+                `transform: rotate(${rotation}deg); transform-origin: center;`
+              "
+            ></v-img>
+            <v-row no-gutters>
+              <v-col justify="center" align="center" cols="10" md="1" xs="1">
+                <v-file-input
+                  type="file"
+                  accept="image/*"
+                  hide-input
+                  v-model="pic_value"
+                  prepend-icon="mdi-camera"
+                ></v-file-input>
+              </v-col>
+              <v-col cols="15" md="8" justify="left" align="left">
                 <v-textarea
                   label="Новое сообщение"
                   no-resize
@@ -81,7 +95,7 @@
                 >
                 </v-textarea>
               </v-col>
-              <v-col justify="center" align="center" cols="10" md="1">
+              <v-col justify="center" align="center" cols="10" md="1" xs="1">
                 <v-btn
                   icon
                   outlined
@@ -92,16 +106,19 @@
                   <v-icon>mdi-telegram</v-icon>
                 </v-btn>
               </v-col>
-              <v-col justify="center" align="center" cols="10" md="1">
-                <v-file-input
-                  type="file"
-                  accept="image/*"
-                  hide-input
-                  v-model="pic_value"
-                  prepend-icon="mdi-camera"
-                ></v-file-input>
+
+              <v-col justify="left" align="left" cols="10" md="1" xs="1">
+                <v-btn
+                  icon
+                  color="#00a34b"
+                  @click="rotateRight"
+                  v-show="pic_value"
+                >
+                  <v-icon>mdi-rotate-right</v-icon>
+                </v-btn>
               </v-col>
-              <v-col justify="center" align="center" cols="10" md="1">
+
+              <v-col justify="left" align="left" cols="10" md="1" xs="1">
                 <v-btn
                   icon
                   color="#00a34b"
@@ -153,6 +170,7 @@ export default {
     loading: true,
     isChrome: navigator.userAgent.indexOf("Chrome") !== -1,
     dialog: false,
+    rotation: 0,
   }),
   created() {
     this.valChatId = this.$route.params.chatId;
@@ -234,6 +252,9 @@ export default {
       this.text = "";
       this.pic_value = "";
     },
+    rotateRight() {
+      this.rotation += 90;
+    },
   },
 };
 </script>
@@ -244,5 +265,8 @@ export default {
   overflow-x: hidden;
   display: flex;
   flex-direction: column-reverse;
+}
+img {
+  image-orientation: from-image;
 }
 </style>
