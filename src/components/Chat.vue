@@ -13,6 +13,7 @@
           </v-toolbar-title>
 
           <v-spacer></v-spacer>
+
           <v-progress-linear
             v-show="loading"
             :active="loading"
@@ -59,18 +60,28 @@
           <v-divider></v-divider>
         </template>
         <template>
+          <v-dialog v-model="dialog" width="500">
+            <v-img :src="urlFromPicture" @click="imageClick"></v-img>
+          </v-dialog>
           <v-container>
             <v-row>
-              <v-col cols="15" md="10">
+              <v-img
+                :src="urlFromPicture"
+                max-height="150px"
+                max-width="150px"
+                @click="imageClick"
+              ></v-img>
+              <v-col cols="15" md="8">
                 <v-textarea
                   label="Новое сообщение"
                   no-resize
                   rows="1"
                   :value="value"
                   v-model="text"
-                ></v-textarea>
+                >
+                </v-textarea>
               </v-col>
-              <v-col justify="center" align="center">
+              <v-col justify="center" align="center" cols="10" md="1">
                 <v-btn
                   icon
                   outlined
@@ -79,6 +90,25 @@
                   :disabled="clickable"
                 >
                   <v-icon>mdi-telegram</v-icon>
+                </v-btn>
+              </v-col>
+              <v-col justify="center" align="center" cols="10" md="1">
+                <v-file-input
+                  type="file"
+                  accept="image/*"
+                  hide-input
+                  v-model="pic_value"
+                  prepend-icon="mdi-camera"
+                ></v-file-input>
+              </v-col>
+              <v-col justify="center" align="center" cols="10" md="1">
+                <v-btn
+                  icon
+                  color="#00a34b"
+                  @click="clearPayload"
+                  :disabled="clickable"
+                >
+                  <v-icon>mdi-delete</v-icon>
                 </v-btn>
               </v-col>
             </v-row>
@@ -115,11 +145,14 @@ export default {
     },
     text: "",
     value: "",
+    pic_value: "",
+    picture: "",
     stompClient: null,
     valChatId: null,
     limit: 20,
     loading: true,
     isChrome: navigator.userAgent.indexOf("Chrome") !== -1,
+    dialog: false,
   }),
   created() {
     this.valChatId = this.$route.params.chatId;
@@ -132,10 +165,15 @@ export default {
   },
   computed: {
     clickable() {
-      if (!this.text.replace(/\s/g, "").length) {
-        return true;
+      if (this.text.replace(/\s/g, "").length || this.pic_value) {
+        return false;
       }
-      return false;
+      return true;
+    },
+    urlFromPicture() {
+      var binaryData = [];
+      binaryData.push(this.pic_value);
+      return window.URL.createObjectURL(new Blob(binaryData)).toString();
     },
   },
   methods: {
@@ -149,7 +187,7 @@ export default {
       this.newMessageObj.text = this.text;
       chatService.sendMessage(this.newMessageObj).then((res) => {
         this.chatobj = res.data;
-        this.text = "";
+        this.clearPayload();
         this.stompClient.send("/app/hello", "Hello");
       });
     },
@@ -188,6 +226,13 @@ export default {
         this.limit = this.limit + 20;
         this.getChat();
       }
+    },
+    imageClick() {
+      this.dialog = !this.dialog;
+    },
+    clearPayload() {
+      this.text = "";
+      this.pic_value = "";
     },
   },
 };
